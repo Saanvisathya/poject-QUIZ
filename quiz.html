@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <title>Quick Quiz</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            
+        }
+
+        body {
+            background-color: lightgray;
+            font-family: sans-serif;
+        }
+
+        .website {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            margin: 100px auto 0;
+            border-radius: 10px;
+            padding: 30px;
+        }
+
+        .website h1 {
+            font-size: 25px;
+            color: royalblue;
+            font-weight: 600;
+            padding-bottom: 30px;
+        }
+
+        .quiz {
+            padding: 20px 0;
+        }
+
+        .quiz h2 {
+            font-size: 18px;
+            color: black;
+            font-weight: 600;
+        }
+
+        .btn {
+            background: white;
+            color: black;
+            font-weight: 500;
+            width: 100%;
+            border: 1px solid black;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: left;
+            border-radius: 4px;
+           
+        }
+
+        .btn:hover {
+            background: black;
+            color: white;
+        }
+
+        .btn.correct {
+            background-color: green;
+            color: white;
+        }
+
+        .btn.wrong {
+            background-color: red;
+            color: white;
+        }
+
+        #next {
+            background: royalblue;
+            color: white;
+            font-weight: 500;
+            width: 150px;
+            border: 0;
+            padding: 10px;
+            margin: 20px auto 0;
+            border-radius: 4px;
+            
+            
+        }
+    </style>
+</head>
+<body>
+    <div class="website">
+        <h1>C++ Quiz</h1>
+<hr>
+        <div class="quiz">
+            <h2 id="question">Question goes here</h2>
+            <div id="answer-buttons"></div>
+            <button id="next">Next</button>
+        </div>
+    </div>
+
+   
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <script>
+        const questions = [
+            {
+                question: "1. Who invented C++?",
+                answers: [
+                    { text: "Dennis Ritchie", correct: false },
+                    { text: "Ken Thompson", correct: false },
+                    { text: "Brian Kernighan", correct: false },
+                    { text: "Bjarne Stroustrup", correct: true }
+                ]
+            },
+            {
+                question: "2. What is C++?",
+                answers: [
+                    { text: "C++ is an object oriented programming language", correct: false },
+                    { text: "C++ is a procedural programming language", correct: false },
+                    { text: "C++ supports both procedural and object oriented programming language", correct: true },
+                    { text: "C++ is a functional programming language", correct: false }
+                ]
+            },
+            {
+                question: "3. Which of the following is used for comments in C++?",
+                answers: [
+                    { text: "/* comment */", correct: false },
+                    { text: "// comment */", correct: false },
+                    { text: "// comment", correct: false },
+                    { text: "both // comment or /* comment */", correct: true }
+                ]
+            },
+            {
+                question: "4. What is the default access specifier for members of a class in C++?",
+                answers: [
+                    { text: "protected", correct: false },
+                    { text: "public", correct: false },
+                    { text: "private", correct: true },
+                    { text: "default", correct: false }
+                ]
+            },
+            {
+                question: "5. Which one of the following represents the tab?",
+                answers: [
+                    { text: "\\n", correct: false },
+                    { text: "\\t", correct: true },
+                    { text: "\\r", correct: false },
+                    { text: "None of the above", correct: false }
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function showQuestion() {
+            $('#next').hide();
+            const question = questions[currentQuestionIndex];
+            $('#question').text(question.question);
+            $('#answer-buttons').empty();
+
+            question.answers.forEach(answer => {
+                const button = $('<button>').addClass('btn').text(answer.text);
+                if (answer.correct) {
+                    button.data('correct', true);
+                }
+                $('#answer-buttons').append(button);
+            });
+        }
+
+        function selectAnswer(e) {
+            const selectedButton = $(e.target);
+            const correct = selectedButton.data('correct');
+            if (correct) {
+                selectedButton.addClass('correct');
+                score++;
+            } else {
+                selectedButton.addClass('wrong');
+            }
+
+            $('.btn').each(function () {
+                const correct = $(this).data('correct');
+                if (correct) {
+                    $(this).addClass('correct');
+                }
+                $(this).prop('disabled', true);
+            });
+
+            $('#next').show();
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showScore();
+            }
+        }
+
+        function showScore() {
+            $('#question').text(`You scored ${score} out of ${questions.length}!`);
+            $('#answer-buttons').empty();
+            $('#next').text("Restart").show();
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            $('#next').text("Next");
+            showQuestion();
+        }
+
+        // Initialize
+        $(document).ready(function () {
+            showQuestion();
+
+            $('#answer-buttons').on('click', '.btn', selectAnswer);
+            $('#next').click(function () {
+                if (currentQuestionIndex < questions.length) {
+                    nextQuestion();
+                } else {
+                    restartQuiz();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
